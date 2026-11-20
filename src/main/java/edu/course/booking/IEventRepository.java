@@ -2,9 +2,9 @@ package edu.course.booking;
 
 public interface IEventRepository {
 
-    boolean hasAvailableTickets(String eventId, int quantity);
+    boolean isSoldOut(String eventId);
 
-    void recordBooking(String eventId, int quantity);
+    void saveBooking(BookingRequest booking);
 
 }
 

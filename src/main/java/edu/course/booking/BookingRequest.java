@@ -11,8 +11,10 @@ public class BookingRequest {
     private int pricePerTicketInCents;
     public BookingRequest(String customerId, String eventId,
                           int ticketQuantity, int pricePerTicketInCents) {
+                            
 
-        if (customerId == null || customerId.isBlank()) {
+
+       /* if (customerId == null || customerId.isBlank()) {
             throw new IllegalArgumentException("Customer ID is required");
         }
 
@@ -26,7 +28,7 @@ public class BookingRequest {
 
         if (pricePerTicketInCents <= 0) {
             throw new IllegalArgumentException("Price must be greater than zero");
-        }
+        }*/
 
         this.customerId = customerId;
         this.eventId = eventId;
