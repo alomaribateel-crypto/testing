@@ -136,4 +136,5 @@ void notificationFailureDoesNotFailBooking() throws Exception {
         assertEquals("TX-123", result.getTransactionId());
         verify(repo, times(1)).saveBooking(req);
     }
+    
 }

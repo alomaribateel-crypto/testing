@@ -34,7 +34,11 @@ public class BookingManager {
     return BookingResult.of(BookingResult.Status.PAYMENT_FAILED);
 }
             eventRepository.saveBooking(r);
-            notificationService.sendBookingConfirmation(r.getCustomerId(), r.getEventId());
+  try {
+                notificationService.sendBookingConfirmation(r.getCustomerId(), r.getEventId());
+            } catch (RuntimeException e) {
+                // booking is already paid and saved; notification failure must not undo it
+            }
             return BookingResult.success(tx);
         } catch (PaymentFailedException e) {
             return BookingResult.of(BookingResult.Status.PAYMENT_FAILED);
