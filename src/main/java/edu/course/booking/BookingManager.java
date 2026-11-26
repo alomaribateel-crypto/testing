@@ -27,6 +27,9 @@ public class BookingManager {
         int total = r.getTicketQuantity() * r.getPricePerTicketInCents();
         try {
             String tx = paymentGateway.processPayment(r.getCustomerId(), total);
+            if (tx == null || tx.isBlank()) {
+    return BookingResult.of(BookingResult.Status.PAYMENT_FAILED);
+}
             eventRepository.saveBooking(r);
             notificationService.sendBookingConfirmation(r.getCustomerId(), r.getEventId());
             return BookingResult.success(tx);
