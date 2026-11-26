@@ -122,4 +122,18 @@ void notificationFailureDoesNotFailBooking() throws Exception {
     assertEquals("TX-123", result.getTransactionId());
     verify(repo, times(1)).saveBooking(req);
 }
+@Test
+    void notificationFailureDoesNotFailBooking() throws Exception {
+        BookingRequest req = new BookingRequest("C1", "E1", 2, 2500);
+        when(repo.isSoldOut("E1")).thenReturn(false);
+        when(gateway.processPayment("C1", 5000)).thenReturn("TX-123");
+        doThrow(new RuntimeException("smtp down"))
+            .when(notifier).sendBookingConfirmation("C1", "E1");
+
+        BookingResult result = manager.processBooking(req);
+
+        assertEquals(BookingResult.Status.SUCCESS, result.getStatus());
+        assertEquals("TX-123", result.getTransactionId());
+        verify(repo, times(1)).saveBooking(req);
+    }
 }
