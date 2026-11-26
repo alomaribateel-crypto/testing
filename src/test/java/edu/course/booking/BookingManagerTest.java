@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -92,4 +94,18 @@ class BookingManagerTest {
         verify(repo, never()).saveBooking(any());
         verify(notifier, never()).sendBookingConfirmation(anyString(), anyString());
     }
+    @ParameterizedTest
+@NullAndEmptySource
+@ValueSource(strings = {"   "})
+void blankTransactionIdIsPaymentFailure(String txId) throws Exception {
+    BookingRequest req = new BookingRequest("C1", "E1", 2, 2500);
+    when(repo.isSoldOut("E1")).thenReturn(false);
+    when(gateway.processPayment("C1", 5000)).thenReturn(txId);
+
+    BookingResult result = manager.processBooking(req);
+
+    assertEquals(BookingResult.Status.PAYMENT_FAILED, result.getStatus());
+    verify(repo, never()).saveBooking(any());
+    verify(notifier, never()).sendBookingConfirmation(anyString(), anyString());
+}
 }
