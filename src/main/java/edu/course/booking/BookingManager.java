@@ -12,15 +12,18 @@ public class BookingManager {
         this.notificationService = notificationService;
         this.eventRepository = eventRepository;
     }
+    private boolean isValid(BookingRequest r) {
+    return r != null
+            && r.getCustomerId() != null && !r.getCustomerId().isBlank()
+            && r.getEventId() != null && !r.getEventId().isBlank()
+            && r.getTicketQuantity() >= 1 && r.getTicketQuantity() <= 5
+            && r.getPricePerTicketInCents() > 0;
+}
 
     public BookingResult processBooking(BookingRequest r) {
-        if (r == null
-                || r.getCustomerId() == null || r.getCustomerId().isBlank()
-                || r.getEventId() == null || r.getEventId().isBlank()
-                || r.getTicketQuantity() < 1 || r.getTicketQuantity() > 5
-                || r.getPricePerTicketInCents() <= 0) {
-            return BookingResult.of(BookingResult.Status.INVALID_REQUEST);
-        }
+       if (!isValid(r)) {
+    return BookingResult.of(BookingResult.Status.INVALID_REQUEST);
+}
         if (eventRepository.isSoldOut(r.getEventId())) {
             return BookingResult.of(BookingResult.Status.SOLD_OUT);
         }
