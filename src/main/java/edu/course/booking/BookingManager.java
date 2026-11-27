@@ -19,6 +19,9 @@ public class BookingManager {
             && r.getTicketQuantity() >= 1 && r.getTicketQuantity() <= 5
             && r.getPricePerTicketInCents() > 0;
 }
+private int calculateTotal(BookingRequest r) {
+        return r.getTicketQuantity() * r.getPricePerTicketInCents();
+    }
 
     public BookingResult processBooking(BookingRequest r) {
        if (!isValid(r)) {
@@ -27,7 +30,7 @@ public class BookingManager {
         if (eventRepository.isSoldOut(r.getEventId())) {
             return BookingResult.of(BookingResult.Status.SOLD_OUT);
         }
-        int total = r.getTicketQuantity() * r.getPricePerTicketInCents();
+int total = calculateTotal(r);
         try {
             String tx = paymentGateway.processPayment(r.getCustomerId(), total);
             if (tx == null || tx.isBlank()) {
