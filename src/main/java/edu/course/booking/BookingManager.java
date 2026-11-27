@@ -19,9 +19,7 @@ public class BookingManager {
             && r.getTicketQuantity() >= 1 && r.getTicketQuantity() <= 5
             && r.getPricePerTicketInCents() > 0;
 }
-private int calculateTotal(BookingRequest r) {
-        return r.getTicketQuantity() * r.getPricePerTicketInCents();
-    }
+
 
     public BookingResult processBooking(BookingRequest r) {
        if (!isValid(r)) {
@@ -46,5 +44,8 @@ int total = calculateTotal(r);
         } catch (PaymentFailedException e) {
             return BookingResult.of(BookingResult.Status.PAYMENT_FAILED);
         }
+    }
+    private int calculateTotal(BookingRequest r) {
+        return r.getTicketQuantity() * r.getPricePerTicketInCents();
     }
 }
